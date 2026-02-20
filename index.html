@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Votación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .bar-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .bar {
+            height: 30px;
+            width: 0%;
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            transition: width 0.3s ease;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px;
+            width: 30%;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .download {
+            width: 100%;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .reset {
+            width: 100%;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Votación</h2>
+
+<!-- Barra total -->
+<div class="bar-container">
+    <div id="totalBar" class="bar">0 votos</div>
+</div>
+
+<!-- Botones de voto -->
+<div class="buttons">
+    <button onclick="votar('A')">Opción A</button>
+    <button onclick="votar('B')">Opción B</button>
+    <button onclick="votar('C')">Opción C</button>
+</div>
+
+<!-- Descargar TXT -->
+<button class="download" onclick="descargarTXT()">
+    Descargar resultados (.txt)
+</button>
+
+<!-- Reset -->
+<button class="reset" onclick="resetearVotos()">
+    Restablecer votación
+</button>
+
+<script>
+    // 🔒 Cargar votos
+    let votos = JSON.parse(localStorage.getItem("votos")) || {
+        A: 0,
+        B: 0,
+        C: 0
+    };
+
+    function votar(opcion) {
+        votos[opcion]++;
+        localStorage.setItem("votos", JSON.stringify(votos));
+        actualizarBarra();
+    }
+
+    function actualizarBarra() {
+        let total = votos.A + votos.B + votos.C;
+        let porcentaje = Math.min(total * 10, 100);
+
+        let barra = document.getElementById("totalBar");
+        barra.style.width = porcentaje + "%";
+        barra.textContent = total + " votos";
+    }
+
+    function descargarTXT() {
+        let contenido =
+            "Resultados de la votación\n\n" +
+            "Opción A: " + votos.A + " votos\n" +
+            "Opción B: " + votos.B + " votos\n" +
+            "Opción C: " + votos.C + " votos\n" +
+            "\nTotal: " + (votos.A + votos.B + votos.C);
+
+        let blob = new Blob([contenido], { type: "text/plain" });
+        let url = URL.createObjectURL(blob);
+
+        let enlace = document.createElement("a");
+        enlace.href = url;
+        enlace.download = "resultados_votacion.txt";
+        enlace.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    function resetearVotos() {
+        let confirmar = confirm("¿Está seguro de restablecer la información?");
+        if (!confirmar) return;
+
+        let codigo = prompt("Ingrese el código para restablecer:");
+
+        if (codigo === "1234") {
+            votos = { A: 0, B: 0, C: 0 };
+            localStorage.setItem("votos", JSON.stringify(votos));
+            actualizarBarra();
+            alert("Votación restablecida correctamente.");
+        } else {
+            alert("Código incorrecto. No se realizaron cambios.");
+        }
+    }
+
+    // Inicializar
+    actualizarBarra();
+</script>
+
+</body>
+</html>
