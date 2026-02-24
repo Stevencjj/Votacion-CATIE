@@ -1,159 +1,194 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Votación</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 30px;
-            max-width: 500px;
-            margin: auto;
-        }
+<meta charset="UTF-8">
+<title>Votación CATIE</title>
 
-        h2 {
-            text-align: center;
-        }
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        .bar-container {
-            width: 100%;
-            background-color: #eee;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
+/* ===== FONDO ===== */
+body {
+    background: url("background.png") no-repeat center center;
+    background-size: cover;
+    background-color: #f7f2de;
+    position: relative;
+}
 
-        .bar {
-            height: 30px;
-            width: 0%;
-            background-color: #4caf50;
-            color: white;
-            text-align: center;
-            line-height: 30px;
-            transition: width 0.3s ease;
-        }
+/* ===== CONTADOR (AJUSTADO) ===== */
+#contador {
+    position: absolute;
+    bottom: 150px;   /* ⬅ bajado */
+    left: 40px;      /* ⬅ alineado a la izquierda */
+    background: #0a4ea1;
+    color: #ffd200;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 10;
+}
 
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
+/* ===== CONTENEDOR DE VOTOS ===== */
+.votacion {
+    position: absolute;
+    left: 20%;
+    top: 24%;   /* ⬅ antes 28%, ahora más arriba */
+    width: 420px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 40px 40px;
+    justify-items: center;
+}
 
-        button {
-            padding: 10px;
-            width: 30%;
-            cursor: pointer;
-            font-size: 16px;
-        }
+/* Tarjeta superior centrada */
+.votacion .top {
+    grid-column: span 2;
+}
 
-        .download {
-            width: 100%;
-            background-color: #2196f3;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
+/* ===== TARJETA AZUL ===== */
+.vote-card {
+    width: 210px;
+    height: 290px;
+    background: #0a4ea1;
+    border-radius: 120px 120px 25px 25px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        .reset {
-            width: 100%;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+/* Imagen circular */
+.vote-card .circle {
+    width: 155px;
+    height: 155px;
+    margin-top: 18px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+}
+
+.vote-card .circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Texto amarillo */
+.vote-card .label {
+    margin-top: 18px;
+    color: #ffd200;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+/* ===== BOTONES ===== */
+.acciones {
+    position: absolute;
+    bottom: 40px;
+    right: 80px;
+    display: flex;
+    gap: 12px;
+}
+
+.acciones button {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    background: #0a4ea1;
+    color: #ffd200;
+    border-radius: 6px;
+}
+
+.acciones button:hover {
+    opacity: 0.9;
+}
+</style>
 </head>
+
 <body>
 
-<h2>Votación</h2>
+<div id="contador">Votos: 0</div>
 
-<!-- Barra total -->
-<div class="bar-container">
-    <div id="totalBar" class="bar">0 votos</div>
+<div class="votacion">
+
+    <!-- OPCIÓN A -->
+    <div class="vote-card top" onclick="votar('A')">
+        <div class="circle">
+            <img src="card-blue.jpg">
+        </div>
+        <div class="label">C.A.T.I.E</div>
+    </div>
+
+    <!-- OPCIÓN B -->
+    <div class="vote-card" onclick="votar('B')">
+        <div class="circle">
+            <img src="card-blue.jpg">
+        </div>
+        <div class="label">C.A.T.I.E</div>
+    </div>
+
+    <!-- OPCIÓN C -->
+    <div class="vote-card" onclick="votar('C')">
+        <div class="circle">
+            <img src="card-blue.jpg">
+        </div>
+        <div class="label">C.A.T.I.E</div>
+    </div>
+
 </div>
 
-<!-- Botones de voto -->
-<div class="buttons">
-    <button onclick="votar('A')">Opción A</button>
-    <button onclick="votar('B')">Opción B</button>
-    <button onclick="votar('C')">Opción C</button>
+<div class="acciones">
+    <button onclick="descargarTXT()">Descargar TXT</button>
+    <button onclick="resetear()">Restablecer</button>
 </div>
-
-<!-- Descargar TXT -->
-<button class="download" onclick="descargarTXT()">
-    Descargar resultados (.txt)
-</button>
-
-<!-- Reset -->
-<button class="reset" onclick="resetearVotos()">
-    Restablecer votación
-</button>
 
 <script>
-    // 🔒 Cargar votos
-    let votos = JSON.parse(localStorage.getItem("votos")) || {
-        A: 0,
-        B: 0,
-        C: 0
-    };
+let votos = JSON.parse(localStorage.getItem("votos")) || {A:0,B:0,C:0};
 
-    function votar(opcion) {
-        votos[opcion]++;
+function votar(op) {
+    votos[op]++;
+    localStorage.setItem("votos", JSON.stringify(votos));
+    actualizar();
+}
+
+function actualizar() {
+    document.getElementById("contador").textContent =
+        "Votos: " + (votos.A + votos.B + votos.C);
+}
+
+function descargarTXT() {
+    let txt =
+        `Resultados\n\nA: ${votos.A}\nB: ${votos.B}\nC: ${votos.C}\n\nTotal: ${votos.A+votos.B+votos.C}`;
+    let blob = new Blob([txt], {type:"text/plain"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "resultados.txt";
+    a.click();
+}
+
+function resetear() {
+    if (!confirm("¿Está seguro de restablecer la información?")) return;
+    let c = prompt("Ingrese el código:");
+    if (c === "1234") {
+        votos = {A:0,B:0,C:0};
         localStorage.setItem("votos", JSON.stringify(votos));
-        actualizarBarra();
+        actualizar();
+        alert("Votación restablecida");
     }
+}
 
-    function actualizarBarra() {
-        let total = votos.A + votos.B + votos.C;
-        let porcentaje = Math.min(total * 10, 100);
-
-        let barra = document.getElementById("totalBar");
-        barra.style.width = porcentaje + "%";
-        barra.textContent = total + " votos";
-    }
-
-    function descargarTXT() {
-        let contenido =
-            "Resultados de la votación\n\n" +
-            "Opción A: " + votos.A + " votos\n" +
-            "Opción B: " + votos.B + " votos\n" +
-            "Opción C: " + votos.C + " votos\n" +
-            "\nTotal: " + (votos.A + votos.B + votos.C);
-
-        let blob = new Blob([contenido], { type: "text/plain" });
-        let url = URL.createObjectURL(blob);
-
-        let enlace = document.createElement("a");
-        enlace.href = url;
-        enlace.download = "resultados_votacion.txt";
-        enlace.click();
-
-        URL.revokeObjectURL(url);
-    }
-
-    function resetearVotos() {
-        let confirmar = confirm("¿Está seguro de restablecer la información?");
-        if (!confirmar) return;
-
-        let codigo = prompt("Ingrese el código para restablecer:");
-
-        if (codigo === "1234") {
-            votos = { A: 0, B: 0, C: 0 };
-            localStorage.setItem("votos", JSON.stringify(votos));
-            actualizarBarra();
-            alert("Votación restablecida correctamente.");
-        } else {
-            alert("Código incorrecto. No se realizaron cambios.");
-        }
-    }
-
-    // Inicializar
-    actualizarBarra();
+actualizar();
 </script>
 
 </body>
